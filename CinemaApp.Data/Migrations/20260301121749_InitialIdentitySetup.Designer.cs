@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CinemaApp.Data.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(CinemaAppDbContext))]
     [Migration("20260301121749_InitialIdentitySetup")]
     partial class InitialIdentitySetup
     {

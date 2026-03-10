@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 namespace CinemaApp.Web
 {
     using CinemaApp.Data;
+    using CinemaApp.Data.Repository;
+    using CinemaApp.Data.Repository.Contracts;
     using CinemaApp.Services.Core;
     using CinemaApp.Services.Core.Interfaces;
     using Microsoft.AspNetCore.Identity;
@@ -19,6 +21,7 @@ namespace CinemaApp.Web
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+            builder.Services.AddScoped<IMovieRepository, MovieRepository>();
             builder.Services.AddScoped<IMovieService, MovieService>();
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => 

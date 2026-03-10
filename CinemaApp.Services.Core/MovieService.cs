@@ -1,4 +1,5 @@
 ﻿using CinemaApp.Data;
+using CinemaApp.Data.Repository.Contracts;
 using CinemaApp.Services.Core.Interfaces;
 using CinemaApp.Web.ViewModels.Movie;
 using Microsoft.EntityFrameworkCore;
@@ -10,18 +11,16 @@ namespace CinemaApp.Services.Core
 {
     public class MovieService : IMovieService
     {
-        private readonly CinemaAppDbContext dbContext;
+        private readonly IMovieRepository movieRepository;
 
-        public MovieService(CinemaAppDbContext dbContext)
+        public MovieService(IMovieRepository movieRepository)
         {
-            this.dbContext = dbContext;
+            this.movieRepository = movieRepository;
         }
 
         public async Task<IEnumerable<AllMoviesIndexViewModel>> GetAllMoviesOrderedByTitleAsync()
         {
-            IEnumerable<AllMoviesIndexViewModel> allMoviesViewModel = await dbContext
-                .Movies
-                .AsNoTracking()
+            IEnumerable<AllMoviesIndexViewModel> allMoviesViewModel = await movieRepository
                 .Select(m => new AllMoviesIndexViewModel()
                 {
                     Id = m.Id,

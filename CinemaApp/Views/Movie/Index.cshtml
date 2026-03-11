@@ -39,10 +39,10 @@
                 </div>
 
                 <div class="me-3 d-flex gap-2">
-                    <button class="btn btn-outline-primary btn-sm rounded-pill px-3 view-details-btn"
-                            data-movie-id="@movie.Id">
+                    <a asp-area="" asp-controller="Movie" asp-action="Details" asp-route-id="@movie.Id"
+                       class="btn btn-primary btn-sm rounded-pill px-4 fw-bold">
                         <i class="bi bi-eye"></i> View Details
-                    </button>
+                    </a>
 
                     @if (User?.Identity?.IsAuthenticated ?? false)
                     {

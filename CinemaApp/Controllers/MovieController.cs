@@ -62,5 +62,26 @@ namespace CinemaApp.Web.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+
+        public async Task<IActionResult> Details(Guid id)
+        {
+            if(id == null)
+            {
+                return BadRequest();
+            }
+
+            MovieDetailsViewModel? movieDetailsVm = await movieService.GetDetailsByIdAsync(id);
+
+            if(movieDetailsVm == null)
+            {
+                return NotFound();
+            }
+
+            return View(movieDetailsVm);
+        }
+
     }
 }

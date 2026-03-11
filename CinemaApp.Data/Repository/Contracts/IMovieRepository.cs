@@ -15,5 +15,7 @@ namespace CinemaApp.Data.Repository.Contracts
 
         Task<bool> AddMovieAsync(Movie movie);
 
+        Task<Movie?> GetMovieByIdAsync(Guid id);
+
     }
 }

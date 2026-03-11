@@ -72,6 +72,10 @@ namespace CinemaApp.Data.Repository
             return await dbContext.SaveChangesAsync();
         }
 
- 
+        public async Task<Movie?> GetMovieByIdAsync(Guid id)
+        {
+            return await dbContext.Movies
+                 .FindAsync(id);
+        }
     }
 }

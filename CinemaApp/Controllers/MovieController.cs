@@ -60,7 +60,6 @@ namespace CinemaApp.Web.Controllers
                 return View(model);
             }
 
-
             return RedirectToAction(nameof(Index));
         }
     }

@@ -9,12 +9,11 @@ namespace CinemaApp.Data.Repository.Contracts
 {
     public interface IMovieRepository
     {
-        IQueryable<Movie> GetAllMoviesNoTracking();
+        Task<IEnumerable<Movie>> GetAllMoviesNoTrackingAsync(Func<Movie, Movie>? projectFunc = null);
 
-        Task<IEnumerable<Movie>> GetAllMovies();
+        Task<IEnumerable<Movie>> GetAllMoviesAsync();
 
-        Task AddMovieAsync(Movie movie);
+        Task<bool> AddMovieAsync(Movie movie);
 
-        Task<int> SaveChangesAsync();
     }
 }

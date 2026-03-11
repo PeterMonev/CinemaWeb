@@ -47,10 +47,10 @@ namespace CinemaApp.Web.Controllers
             {
              await movieService.CreateMovieAsync(model);
 
-            } catch (DatabaseEntityCreatePersistFailureException ex)
+            } catch (EntityPersistFailureException ex)
             {
                 logger.LogError(ex, CrudMovieFailureMessage);
-                ModelState.AddModelError(string.Empty, CrudMovieFailureMessage);
+                ModelState.AddModelError(string.Empty, string.Format(CrudMovieFailureMessage, "creating"));
                 return View(model);
             }
             catch (Exception ex)
@@ -81,6 +81,62 @@ namespace CinemaApp.Web.Controllers
             }
 
             return View(movieDetailsVm);
+        }
+
+        [HttpGet]
+
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            MovieFormModel? model = await movieService.GetMovieFormModelByIdAsync(id);
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit([FromRoute]Guid id, MovieFormModel model)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            bool existById = await movieService.ExistsByIdAsync(id);
+
+            if (!existById)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+
+            }
+
+            try
+            {
+               await movieService.EditMovieAsync(id, model);
+            } catch (EntityNotFoundException ex)
+            {
+                return NotFound();
+            } catch (EntityPersistFailureException ex)
+            {
+                logger.LogError(ex, CrudMovieFailureMessage);
+                ModelState.AddModelError(string.Empty, string.Format(CrudMovieFailureMessage, "creating"));
+                return View(model);
+            }
+
+            return RedirectToAction(nameof(Details), new { id});
         }
 
     }

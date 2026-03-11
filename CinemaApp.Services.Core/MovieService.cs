@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
 using static CinemaApp.GCommon.ApplicationConstants;
-using static CinemaApp.GCommon.Exceptions.DatabaseEntityCreatePersistFailureException;
+using static CinemaApp.GCommon.Exceptions.EntityPersistFailureException;
 
 namespace CinemaApp.Services.Core
 {
@@ -38,8 +38,38 @@ namespace CinemaApp.Services.Core
 
             if (!successAdd)
             {
-                throw new DatabaseEntityCreatePersistFailureException();
+                throw new EntityPersistFailureException();
             }
+        }
+
+        public async Task EditMovieAsync(Guid id, MovieFormModel model)
+        {
+          Movie? movieDb = await movieRepository.GetMovieByIdAsync(id);
+
+            if(movieDb == null)
+            {
+                throw new EntityNotFoundException();
+            }
+
+            movieDb.Title = model.Title;
+            movieDb.Genre = model.Genre;
+            movieDb.ReleaseDate = model.ReleaseDate;
+            movieDb.Description = model.Description;
+            movieDb.Director = model.Director;
+            movieDb.ImageUrl = model.ImageUrl;
+            movieDb.Duration = model.Duration;
+
+            bool editSuccess = await movieRepository.EditMovieAsync(movieDb);
+
+            if (!editSuccess)
+            {
+                throw new EntityPersistFailureException();
+            }
+        }
+
+        public async Task<bool> ExistsByIdAsync(Guid id)
+        {
+          return await movieRepository.ExistsByAsync(id);
         }
 
         public async Task<IEnumerable<AllMoviesIndexViewModel>> GetAllMoviesOrderedByTitleAsync()
@@ -97,6 +127,27 @@ namespace CinemaApp.Services.Core
                 ImageUrl = movieDb.ImageUrl ?? DefaultImageUrl
             };
 
+        }
+
+        public async Task<MovieFormModel?> GetMovieFormModelByIdAsync(Guid id)
+        {
+            Movie? movieDb = await movieRepository.GetMovieByIdAsync(id);
+
+            if (movieDb == null)
+            {
+                return null;
+            }
+
+            return new MovieFormModel()
+            {
+                Title = movieDb.Title,
+                Genre = movieDb.Genre,
+                ReleaseDate = movieDb.ReleaseDate,
+                Description = movieDb.Description,
+                Director = movieDb.Director,
+                Duration = movieDb.Duration,
+                ImageUrl = movieDb.ImageUrl
+            };
         }
     }
 }

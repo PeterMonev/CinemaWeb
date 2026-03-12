@@ -1,8 +1,10 @@
-﻿using CinemaApp.Data;
+﻿using AutoMapper;
+using CinemaApp.Data;
 using CinemaApp.Data.Models;
 using CinemaApp.Data.Repository.Contracts;
 using CinemaApp.GCommon.Exceptions;
 using CinemaApp.Services.Core.Interfaces;
+using CinemaApp.Services.Models.Movie;
 using CinemaApp.Web.ViewModels.Movie;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -14,10 +16,12 @@ namespace CinemaApp.Services.Core
 {
     public class MovieService : IMovieService
     {
+        private readonly IMapper mapper;
         private readonly IMovieRepository movieRepository;
 
-        public MovieService(IMovieRepository movieRepository)
+        public MovieService(IMovieRepository movieRepository, IMapper mapper)
         {
+            this.mapper = mapper;
             this.movieRepository = movieRepository;
         }
 
@@ -72,7 +76,7 @@ namespace CinemaApp.Services.Core
           return await movieRepository.ExistsByAsync(id);
         }
 
-        public async Task<IEnumerable<AllMoviesIndexViewModel>> GetAllMoviesOrderedByTitleAsync()
+        public async Task<IEnumerable<MovieAllDto>> GetAllMoviesOrderedByTitleAsync()
         {
             //Fetch Data
             IEnumerable<Movie> allMoviesDb = await movieRepository.GetAllMoviesNoTrackingAsync(movie =>
@@ -89,16 +93,7 @@ namespace CinemaApp.Services.Core
             });
 
             //Process data
-            IEnumerable<AllMoviesIndexViewModel> allMoviesViewModel = allMoviesDb
-                .Select(m => new AllMoviesIndexViewModel()
-                {
-                    Id = m.Id,
-                    Title = m.Title,
-                    Genre = m.Genre,
-                    ReleaseDate = m.ReleaseDate.ToString(DefaultDateFormat, CultureInfo.InvariantCulture),
-                    Director = m.Director,
-                    ImageUrl = m.ImageUrl ?? DefaultImageUrl
-                })
+            IEnumerable<MovieAllDto> allMoviesViewModel = mapper.Map<IEnumerable<MovieAllDto>>(allMoviesDb)
                 .OrderBy(m => m.Title)
                 .ThenBy(m => m.Genre)
                 .ThenBy(m => m.Director)

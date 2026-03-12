@@ -1,11 +1,12 @@
 ﻿using CinemaApp.Data.Models;
+using CinemaApp.Services.Models.Movie;
 using CinemaApp.Web.ViewModels.Movie;
 
 namespace CinemaApp.Services.Core.Interfaces
 {
     public interface IMovieService
     {
-        Task<IEnumerable<AllMoviesIndexViewModel>> GetAllMoviesOrderedByTitleAsync();
+        Task<IEnumerable<MovieAllDto>> GetAllMoviesOrderedByTitleAsync();
 
         Task CreateMovieAsync(MovieFormModel model);
 

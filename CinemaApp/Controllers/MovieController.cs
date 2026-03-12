@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using static CinemaApp.GCommon.OutputMessages.Movie;
 using static CinemaApp.GCommon.ApplicationConstants;
+using AutoMapper;
+using CinemaApp.Services.Models.Movie;
 
 namespace CinemaApp.Web.Controllers
 {
@@ -14,19 +16,23 @@ namespace CinemaApp.Web.Controllers
     {
         private readonly ILogger<MovieController> logger;
         private readonly IMovieService movieService;
-        public MovieController(IMovieService movieService, ILogger<MovieController> logger)
+        private readonly IMapper mapper;
+        public MovieController(IMovieService movieService, ILogger<MovieController> logger, IMapper mapper)
         {
             this.movieService = movieService;
             this.logger = logger;
+            this.mapper = mapper;
         }
 
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            IEnumerable<AllMoviesIndexViewModel> allMoviesViewModel = await movieService.GetAllMoviesOrderedByTitleAsync();
+            IEnumerable<MovieAllDto> movieAllDtios = await movieService.GetAllMoviesOrderedByTitleAsync();
 
-            return View(allMoviesViewModel);
+            IEnumerable<AllMoviesIndexViewModel> allMoviesIndexVms = mapper.Map<IEnumerable<AllMoviesIndexViewModel>>(movieAllDtios);
+
+            return View(allMoviesIndexVms);
         }
 
         [HttpGet]

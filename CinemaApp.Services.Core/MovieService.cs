@@ -25,18 +25,9 @@ namespace CinemaApp.Services.Core
             this.movieRepository = movieRepository;
         }
 
-        public async Task CreateMovieAsync(MovieFormModel model)
+        public async Task CreateMovieAsync(MovieDetailsDto model)
         {
-            Movie movie = new Movie()
-            {
-                Title = model.Title,
-                Genre = model.Genre,
-                ReleaseDate = model.ReleaseDate,
-                Description = model.Description,
-                Director = model.Director,
-                ImageUrl = model.ImageUrl,
-                Duration = model.Duration,
-            };
+            Movie movie = mapper.Map<Movie>(model);
 
             bool successAdd = await movieRepository.AddMovieAsync(movie);
 
@@ -46,7 +37,7 @@ namespace CinemaApp.Services.Core
             }
         }
 
-        public async Task EditMovieAsync(Guid id, MovieFormModel model)
+        public async Task EditMovieAsync(Guid id, MovieDetailsDto movieDetailsDto)
         {
           Movie? movieDb = await movieRepository.GetMovieByIdAsync(id);
 
@@ -55,13 +46,13 @@ namespace CinemaApp.Services.Core
                 throw new EntityNotFoundException();
             }
 
-            movieDb.Title = model.Title;
-            movieDb.Genre = model.Genre;
-            movieDb.ReleaseDate = model.ReleaseDate;
-            movieDb.Description = model.Description;
-            movieDb.Director = model.Director;
-            movieDb.ImageUrl = model.ImageUrl;
-            movieDb.Duration = model.Duration;
+            movieDb.Title = movieDetailsDto.Title;
+            movieDb.Genre = movieDetailsDto.Genre;
+            movieDb.ReleaseDate = movieDetailsDto.ReleaseDate;
+            movieDb.Description = movieDetailsDto.Description;
+            movieDb.Director = movieDetailsDto.Director;
+            movieDb.ImageUrl = movieDetailsDto.ImageUrl;
+            movieDb.Duration = movieDetailsDto.Duration;
 
             bool editSuccess = await movieRepository.EditMovieAsync(movieDb);
 
@@ -102,7 +93,7 @@ namespace CinemaApp.Services.Core
             return allMoviesViewModel;
         }
 
-        public async Task<MovieDetailsViewModel> GetDetailsByIdAsync(Guid id)
+        public async Task<MovieDetailsDto?> GetDetailsByIdAsync(Guid id)
         {
             Movie? movieDb = await movieRepository.GetMovieByIdAsync(id);
 
@@ -111,20 +102,11 @@ namespace CinemaApp.Services.Core
                 return null;
             }
 
-            return new MovieDetailsViewModel()
-            {
-                Id = movieDb.Id,
-                Title = movieDb.Title,
-                Genre = movieDb.Genre,
-                ReleaseDate = movieDb.ReleaseDate.ToString(DefaultDateFormat, CultureInfo.InvariantCulture),
-                Description = movieDb.Description,
-                Director = movieDb.Director,
-                ImageUrl = movieDb.ImageUrl ?? DefaultImageUrl
-            };
+            return mapper.Map<MovieDetailsDto>(movieDb);
 
         }
 
-        public async Task<MovieFormModel?> GetMovieFormModelByIdAsync(Guid id)
+        public async Task<MovieDetailsDto?> GetMovieFormModelByIdAsync(Guid id)
         {
             Movie? movieDb = await movieRepository.GetMovieByIdAsync(id);
 
@@ -133,16 +115,7 @@ namespace CinemaApp.Services.Core
                 return null;
             }
 
-            return new MovieFormModel()
-            {
-                Title = movieDb.Title,
-                Genre = movieDb.Genre,
-                ReleaseDate = movieDb.ReleaseDate,
-                Description = movieDb.Description,
-                Director = movieDb.Director,
-                Duration = movieDb.Duration,
-                ImageUrl = movieDb.ImageUrl
-            };
+            return mapper?.Map<MovieDetailsDto>(movieDb);
         }
 
         public async Task HardDeleteMovieAsync(Guid id)

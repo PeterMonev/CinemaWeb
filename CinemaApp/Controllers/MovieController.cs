@@ -75,7 +75,7 @@ namespace CinemaApp.Web.Controllers
 
         public async Task<IActionResult> Details(Guid id)
         {
-            if(id == null)
+            if(id == Guid.Empty)
             {
                 return BadRequest();
             }
@@ -138,7 +138,7 @@ namespace CinemaApp.Web.Controllers
             {
                 MovieDetailsDto movieDetailsDto = mapper.Map<MovieDetailsDto>(model);
                await movieService.EditMovieAsync(id, movieDetailsDto);
-            } catch (EntityNotFoundException ex)
+            } catch (EntityNotFoundException)
             {
                 return NotFound();
             } catch (EntityPersistFailureException ex)
@@ -184,7 +184,7 @@ namespace CinemaApp.Web.Controllers
             {
                 await movieService.SoftDeleteMovieAsync(id);
             }
-            catch (EntityNotFoundException ex)
+            catch (EntityNotFoundException )
             {
                 return NotFound();
             }

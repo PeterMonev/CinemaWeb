@@ -132,12 +132,58 @@ namespace CinemaApp.Web.Controllers
             } catch (EntityPersistFailureException ex)
             {
                 logger.LogError(ex, CrudMovieFailureMessage);
-                ModelState.AddModelError(string.Empty, string.Format(CrudMovieFailureMessage, "creating"));
+                ModelState.AddModelError(string.Empty, string.Format(CrudMovieFailureMessage, "edit"));
                 return View(model);
             }
 
             return RedirectToAction(nameof(Details), new { id});
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            MovieDetailsViewModel? movieDetailsViewModel = await movieService.GetDetailsByIdAsync(id);
+
+            if(movieDetailsViewModel == null)
+            {
+                return NotFound();
+            }
+
+            return View(movieDetailsViewModel);
+        }
+
+        [HttpPost]
+
+        public async Task<IActionResult> Delete([FromRoute]Guid id,MovieDetailsViewModel? deleteView)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await movieService.SoftDeleteMovieAsync(id);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound();
+            }
+            catch (EntityPersistFailureException ex)
+            {
+                logger.LogError(ex, string.Format(CrudMovieFailureMessage, nameof(Delete)));
+                ModelState.AddModelError(string.Empty, string.Format(CrudMovieFailureMessage, "deleting"));
+                return View(deleteView);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
+ 

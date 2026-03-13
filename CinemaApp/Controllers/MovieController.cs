@@ -28,7 +28,9 @@ namespace CinemaApp.Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            IEnumerable<MovieAllDto> movieAllDtios = await movieService.GetAllMoviesOrderedByTitleAsync();
+            string? userId = GetUserId();
+
+            IEnumerable<MovieAllDto> movieAllDtios = await movieService.GetAllMoviesOrderedByTitleAsync(userId);
 
             IEnumerable<AllMoviesIndexViewModel> allMoviesIndexVms = mapper.Map<IEnumerable<AllMoviesIndexViewModel>>(movieAllDtios);
 
@@ -110,7 +112,7 @@ namespace CinemaApp.Web.Controllers
 
             MovieFormModel movieFormModel = mapper.Map<MovieFormModel>(movieDetailsDto);
 
-            return View(movieDetailsDto);
+            return View(movieFormModel);
         }
 
         [HttpPost]

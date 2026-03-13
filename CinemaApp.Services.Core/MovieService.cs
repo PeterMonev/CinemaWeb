@@ -18,11 +18,13 @@ namespace CinemaApp.Services.Core
     {
         private readonly IMapper mapper;
         private readonly IMovieRepository movieRepository;
+        private readonly IWatchlistRepository watchlistRepository;
 
-        public MovieService(IMovieRepository movieRepository, IMapper mapper)
+        public MovieService(IMovieRepository movieRepository, IMapper mapper, IWatchlistRepository watchlistRepository)
         {
             this.mapper = mapper;
             this.movieRepository = movieRepository;
+            this.watchlistRepository = watchlistRepository;
         }
 
         public async Task CreateMovieAsync(MovieDetailsDto model)
@@ -67,7 +69,7 @@ namespace CinemaApp.Services.Core
           return await movieRepository.ExistsByAsync(id);
         }
 
-        public async Task<IEnumerable<MovieAllDto>> GetAllMoviesOrderedByTitleAsync()
+        public async Task<IEnumerable<MovieAllDto>> GetAllMoviesOrderedByTitleAsync(string? userId = null)
         {
             //Fetch Data
             IEnumerable<Movie> allMoviesDb = await movieRepository.GetAllMoviesNoTrackingAsync(movie =>
@@ -80,17 +82,27 @@ namespace CinemaApp.Services.Core
                     ReleaseDate = movie.ReleaseDate,
                     Description = movie.Description,
                     ImageUrl = movie.ImageUrl,
+                    
                 };
             });
 
             //Process data
-            IEnumerable<MovieAllDto> allMoviesViewModel = mapper.Map<IEnumerable<MovieAllDto>>(allMoviesDb)
+            IEnumerable<MovieAllDto> AllMoviesDtos = mapper.Map<IEnumerable<MovieAllDto>>(allMoviesDb)
                 .OrderBy(m => m.Title)
                 .ThenBy(m => m.Genre)
                 .ThenBy(m => m.Director)
                 .ToList();
 
-            return allMoviesViewModel;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                foreach(MovieAllDto movieDto in AllMoviesDtos)
+                {
+                     movieDto.IsInUserWatchlist = await watchlistRepository
+                        .ExistsAsync(userId, movieDto.Id);
+                }
+            }
+
+            return AllMoviesDtos;
         }
 
         public async Task<MovieDetailsDto?> GetDetailsByIdAsync(Guid id)

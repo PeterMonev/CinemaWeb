@@ -6,7 +6,7 @@ namespace CinemaApp.Services.Core.Interfaces
 {
     public interface IMovieService
     {
-        Task<IEnumerable<MovieAllDto>> GetAllMoviesOrderedByTitleAsync();
+        Task<IEnumerable<MovieAllDto>> GetAllMoviesOrderedByTitleAsync(string? userId = null);
 
         Task CreateMovieAsync(MovieDetailsDto model);
 

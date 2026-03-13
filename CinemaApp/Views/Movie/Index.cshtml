@@ -44,12 +44,11 @@
                         <i class="bi bi-eye"></i> View Details
                     </a>
 
-                    @if (User?.Identity?.IsAuthenticated ?? false)
+                    @if (User?.Identity?.IsAuthenticated == true && movie.IsInUserWatchlist == false)
                     {
-                        <button class="btn btn-outline-warning btn-sm rounded-pill px-3 add-to-watchlist-btn"
-                                data-movie-id="@movie.Id">
+                        <a asp-area="" asp-controller="Watchlist" asp-action="Add" asp-route-id="@movie.Id" class="btn btn-outline-warning btn-sm rounded-pill px-3 add-to-watchlist-btn">
                             <i class="bi bi-bookmark"></i> Add to Watchlist
-                        </button>
+                        </a>
                     }
                 </div>
             </div>

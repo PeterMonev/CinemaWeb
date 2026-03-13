@@ -10,5 +10,9 @@ namespace CinemaApp.Services.Core.Interfaces
     public interface IWatchlistService
     {
         Task<IEnumerable<WatchlistMovieDto>> GetUserWatchlistByIdAsync(string userdId);
+
+        Task<bool> MovieIsUserWatchlistAsync(string userId, Guid movieID);
+
+        Task AddMovieToUserWatchlistAsync(string userId, Guid movieId);
     }
 }

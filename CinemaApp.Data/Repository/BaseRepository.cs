@@ -17,6 +17,11 @@ namespace CinemaApp.Data.Repository
         }
         protected CinemaAppDbContext DbContext => dbContext;
 
+        protected async Task<int> SaveChangesAsync()
+        {
+            return await DbContext.SaveChangesAsync();
+        }
+
         public void Dispose()
         {
             Dispose(true);

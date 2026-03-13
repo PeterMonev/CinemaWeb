@@ -24,5 +24,6 @@ namespace CinemaApp.Data.Repository.Contracts
         Task<bool> SoftDeleteMovieAsync(Movie movie);
 
         Task<bool> HardDeleteMovieAsync(Movie movie);
+
     }
 }

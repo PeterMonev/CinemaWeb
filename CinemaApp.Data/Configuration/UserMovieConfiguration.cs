@@ -13,7 +13,7 @@ namespace CinemaApp.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<UserMovie> entity)
         {
-            entity.HasQueryFilter(um => um.IsDeleted == false && um.Movie.IsDeleted == false);
+            entity.HasQueryFilter(um => um.IsDeleted == false && um.Movie.IsDeleted == false );
              
         }
     }

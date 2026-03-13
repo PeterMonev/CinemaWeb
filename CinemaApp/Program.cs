@@ -9,6 +9,7 @@ namespace CinemaApp.Web
     using CinemaApp.Services.Core.Interfaces;
     using CinemaApp.Services.Mapping;
     using CinemaApp.Services.Models.Movie;
+    using CinemaApp.Web.Infrastructure.Extensions;
     using CinemaApp.Web.ViewModels.Movie;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
@@ -26,8 +27,9 @@ namespace CinemaApp.Web
 
             AutoMapperConfig.RegisterMappings(typeof(MovieAllDto).Assembly, typeof(AllMoviesIndexViewModel).Assembly);
 
-            builder.Services.AddScoped<IMovieRepository, MovieRepository>();
-            builder.Services.AddScoped<IMovieService, MovieService>();
+            builder.Services.RegisterRepositories(typeof(MovieRepository));
+
+            builder.Services.RegisterUserServices(typeof(MovieService));
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => 
             { 

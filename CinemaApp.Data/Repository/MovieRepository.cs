@@ -1,26 +1,20 @@
 ﻿using CinemaApp.Data.Models;
 using CinemaApp.Data.Repository.Contracts;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CinemaApp.Data.Repository
 {
-    public class MovieRepository : IMovieRepository, IDisposable
+    public class MovieRepository : BaseRepository, IMovieRepository
     {
-        private readonly CinemaAppDbContext dbContext;
-        private bool isDisposed = false;
         public MovieRepository(CinemaAppDbContext dbContext)
-        { 
-           this.dbContext = dbContext;
+            : base(dbContext)
+        {
+            
         }
 
         public async Task<IEnumerable<Movie>> GetAllMoviesNoTrackingAsync(Func<Movie, Movie>? projectFunc = null)
         {
-            IQueryable<Movie> movieFetchQuery = this.dbContext.Movies
+            IQueryable<Movie> movieFetchQuery = this.DbContext.Movies
           .AsNoTracking()
           .OrderBy(m => m.Title);
 
@@ -35,7 +29,7 @@ namespace CinemaApp.Data.Repository
 
         public async Task<IEnumerable<Movie>> GetAllMoviesAsync()
         {
-            return await this.dbContext.Movies
+            return await this.DbContext.Movies
                 .AsNoTracking()
                 .OrderBy(m => m.Title)
                 .ToArrayAsync();
@@ -43,49 +37,31 @@ namespace CinemaApp.Data.Repository
 
         public async Task<bool> AddMovieAsync(Movie movie)
         {
-           await this.dbContext.Movies.AddAsync(movie);
+           await this.DbContext.Movies.AddAsync(movie);
            int resultCount = await SaveChangesAsync();
 
            return resultCount == 1;
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected void Dispose(bool disposing)
-        {
-            if (!isDisposed)
-            {
-                if (disposing)
-                {
-                    dbContext.Dispose();
-                }
-            }
-                    isDisposed = true;
-        }
-
         private async Task<int> SaveChangesAsync()
         {
-            return await dbContext.SaveChangesAsync();
+            return await DbContext.SaveChangesAsync();
         }
 
         public async Task<Movie?> GetMovieByIdAsync(Guid id)
         {
-            return await dbContext.Movies
+            return await DbContext.Movies
                  .FindAsync(id);
         }
 
         public async Task<bool> ExistsByAsync(Guid id)
         {
-            return await dbContext.Movies.AnyAsync(m => m.Id == id);
+            return await DbContext.Movies.AnyAsync(m => m.Id == id);
         }
 
         public async Task<bool> EditMovieAsync(Movie movie)
         {
-            dbContext.Movies.Update(movie);
+            DbContext.Movies.Update(movie);
             int resultCount = await SaveChangesAsync();
 
             return resultCount == 1;
@@ -94,7 +70,7 @@ namespace CinemaApp.Data.Repository
         public async Task<bool> SoftDeleteMovieAsync(Movie movie)
         {
             movie.IsDeleted = true;
-            dbContext.Movies.Update(movie);
+            DbContext.Movies.Update(movie);
 
             int resultCount = await SaveChangesAsync();
 
@@ -103,7 +79,7 @@ namespace CinemaApp.Data.Repository
 
         public async Task<bool> HardDeleteMovieAsync(Movie movie)
         {
-            dbContext.Movies.Remove(movie);
+            DbContext.Movies.Remove(movie);
             int resultCount = await SaveChangesAsync();
 
             return resultCount == 1;

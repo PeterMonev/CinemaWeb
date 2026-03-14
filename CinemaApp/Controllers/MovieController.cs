@@ -65,7 +65,8 @@ namespace CinemaApp.Web.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex, UnexpectedErrorMessage);
-                ModelState.AddModelError(string.Empty, UnexpectedErrorMessage);
+                TempData[ErrorTempDataKey] = UnexpectedErrorMessage;
+
                 return View(model);
             }
 
@@ -140,6 +141,7 @@ namespace CinemaApp.Web.Controllers
             {
                 MovieDetailsDto movieDetailsDto = mapper.Map<MovieDetailsDto>(model);
                await movieService.EditMovieAsync(id, movieDetailsDto);
+               
             } catch (EntityNotFoundException)
             {
                 return NotFound();
@@ -150,6 +152,7 @@ namespace CinemaApp.Web.Controllers
                 return View(model);
             }
 
+            TempData[SuccessTempDataKey] = "Edited success!";
             return RedirectToAction(nameof(Details), new { id});
         }
 

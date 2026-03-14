@@ -4,7 +4,6 @@ using CinemaApp.Services.Core.Interfaces;
 using CinemaApp.Services.Models.Watchlist;
 using CinemaApp.Web.ViewModels.Watchlist;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 using static CinemaApp.GCommon.OutputMessages.Watchlist;
 
@@ -25,7 +24,12 @@ namespace CinemaApp.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string? userId = GetUserId();
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
 
             var watchlistDtos = await watchlistService.GetUserWatchlistByIdAsync(userId);
 
@@ -50,6 +54,7 @@ namespace CinemaApp.Web.Controllers
                 return BadRequest();
             } catch (EntityNotFoundException ex)
             {
+                logger.LogError(ex, "Movie not found.");
                 return NotFound();
             } catch (EntityPersistFailureException ex)
             {

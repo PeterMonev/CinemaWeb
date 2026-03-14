@@ -10,7 +10,7 @@ namespace CinemaApp.Services.Core.Interfaces
 
         Task CreateMovieAsync(MovieDetailsDto model);
 
-        Task<MovieDetailsDto> GetDetailsByIdAsync(Guid id);
+        Task<MovieDetailsDto?> GetDetailsByIdAsync(Guid id);
 
         Task<MovieDetailsDto?> GetMovieFormModelByIdAsync(Guid id);
 

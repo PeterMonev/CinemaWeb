@@ -11,7 +11,7 @@ namespace CinemaApp.Data.Repository.Contracts
     {
         Task<IEnumerable<UserMovie>> GetAllUserMoviesAsync();
 
-        Task<UserMovie> GetUserMovieAsync(string userId, Guid movieId);
+        Task<UserMovie?> GetUserMovieAsync(string userId, Guid movieId);
 
         Task<bool> ExistsAsync(string userId, Guid movieID);
 

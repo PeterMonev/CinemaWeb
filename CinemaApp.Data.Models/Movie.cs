@@ -35,5 +35,7 @@ namespace CinemaApp.Data.Models
         public string? ImageUrl { get; set; }
 
         public bool IsDeleted { get; set; } = false;
+
+        public ICollection<UserMovie> MovieUsersWatchlist { get; set; } = new List<UserMovie>();
     }
 }

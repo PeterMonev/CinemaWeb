@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CinemaApp.Data.Common\CinemaApp.Data.Common.csproj" />
     <ProjectReference Include="..\CinemaApp.Data.Models\CinemaApp.Data.Models.csproj" />
     <ProjectReference Include="..\CinemaApp.GCommon\CinemaApp.GCommon.csproj" />
     <ProjectReference Include="..\CinemaApp.Services.AutoMapping\CinemaApp.Services.AutoMapping.csproj" />
+    <ProjectReference Include="..\CinemaApp.Services.Models\CinemaApp.Services.Models.csproj" />
   </ItemGroup>
 
 </Project>

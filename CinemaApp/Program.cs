@@ -3,8 +3,14 @@ using Microsoft.EntityFrameworkCore;
 namespace CinemaApp.Web
 {
     using CinemaApp.Data;
+    using CinemaApp.Data.Repository;
+    using CinemaApp.Data.Repository.Contracts;
     using CinemaApp.Services.Core;
     using CinemaApp.Services.Core.Interfaces;
+    using CinemaApp.Services.Mapping;
+    using CinemaApp.Services.Models.Movie;
+    using CinemaApp.Web.Infrastructure.Extensions;
+    using CinemaApp.Web.ViewModels.Movie;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     public class Program
@@ -19,7 +25,11 @@ namespace CinemaApp.Web
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddScoped<IMovieService, MovieService>();
+            AutoMapperConfig.RegisterMappings(typeof(MovieAllDto).Assembly, typeof(AllMoviesIndexViewModel).Assembly);
+
+            builder.Services.RegisterRepositories(typeof(MovieRepository));
+
+            builder.Services.RegisterUserServices(typeof(MovieService));
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => 
             { 
@@ -27,6 +37,8 @@ namespace CinemaApp.Web
             })
                 .AddEntityFrameworkStores<CinemaAppDbContext>();
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddSingleton(AutoMapperConfig.MapperInstance);
 
             var app = builder.Build();
 
@@ -49,6 +61,8 @@ namespace CinemaApp.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseStatusCodePagesWithRedirects("/Home/Error/{0}");
 
             app.MapControllerRoute(
                 name: "default",

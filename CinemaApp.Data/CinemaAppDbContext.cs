@@ -10,7 +10,9 @@
         {
         }
 
-        public DbSet<Movie> Movies { get; set; } = null!;
+        public virtual DbSet<Movie> Movies { get; set; } = null!;
+
+        public virtual DbSet<UserMovie> UsersMovies { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

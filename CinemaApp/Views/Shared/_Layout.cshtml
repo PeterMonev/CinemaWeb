@@ -12,7 +12,12 @@ string footerNote = (2025 == currentYear) ? $"{currentYear}" : $"{2025} - {curre
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/CinemaApp.Web.styles.css" asp-append-version="true" />
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js" integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ==" crossorigin="anonymous" referrerpolicy="no-referrer" asp-append-version="true" />
 
 	@await RenderSectionAsync("Styles", false)
 
@@ -25,6 +30,7 @@ string footerNote = (2025 == currentYear) ? $"{currentYear}" : $"{2025} - {curre
 </head>
 <body>
 	<header>
+		<partial name="_NotificationPartial" />
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg">
 			<div class="container-fluid">
 				<a class="navbar-brand fw-bold text-warning" asp-area="" asp-controller="Home" asp-action="Index">
@@ -51,7 +57,7 @@ string footerNote = (2025 == currentYear) ? $"{currentYear}" : $"{2025} - {curre
 							</li>
 
 							<li class="nav-item">
-								<a class="nav-link text-light" asp-area="" asp-controller="Movie" asp-action="Add">
+								<a class="nav-link text-light" asp-area="" asp-controller="Movie" asp-action="Create">
 									<i class="bi bi-ticket-perforated"></i> Add Movie
 								</a>
 							</li>
@@ -74,10 +80,8 @@ string footerNote = (2025 == currentYear) ? $"{currentYear}" : $"{2025} - {curre
 			<p>&copy; @footerNote CinemaWebApp | Bringing Cinema and Movies to You</p>
 		</div>
 	</footer>
-	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
-
 	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

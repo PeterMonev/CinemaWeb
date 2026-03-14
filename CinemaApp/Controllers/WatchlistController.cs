@@ -59,5 +59,26 @@ namespace CinemaApp.Web.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Remove(Guid movieId)
+        {
+            string userdId = GetUserId();
+
+            try
+            {
+                await watchlistService.RemoveMovieFromUserWatchlistAsync(userdId, movieId);
+
+            } catch (EntityNotFoundException)
+            {
+                return BadRequest();
+            } catch (EntityPersistFailureException ex)
+            {
+                logger.LogError(ex, string.Format(RemoveFromWatchlistFailureMessage));
+                return RedirectToAction(nameof(Index));
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

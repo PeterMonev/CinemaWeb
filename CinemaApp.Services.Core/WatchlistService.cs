@@ -54,9 +54,9 @@ namespace CinemaApp.Services.Core
 
         public async Task AddMovieToUserWatchlistAsync(string userId, Guid movieId)
         {
-            bool userWatchlistEntryExists = await watchlistRepository.ExistsAsync(userId, movieId);
+           UserMovie? userMovie = await watchlistRepository.GetUserMovieIncludeDeleteAsync(userId, movieId);
 
-            if(userWatchlistEntryExists)
+            if(userMovie != null && userMovie.IsDeleted == false)
             {
                 throw new EntityAlreadyExistsException();
             }
@@ -68,18 +68,50 @@ namespace CinemaApp.Services.Core
                 throw new EntityNotFoundException();
             }
 
+            bool successPersist = false;
+
+            if (userMovie == null)
+            {
+
             UserMovie newUserMoive = new UserMovie()
             {
                 UserId = userId,
                 MovieId = movieId
             };
 
-            bool successAdd = await watchlistRepository.AddUserMovieAsync(newUserMoive);
+                successPersist = await watchlistRepository.AddUserMovieAsync(newUserMoive);
 
-            if (!successAdd)
+            } else
+            {
+                userMovie.IsDeleted = false;
+
+                successPersist = await watchlistRepository.UpdateUserMovieAsync(userMovie);
+            }
+
+
+            if(!successPersist)
             {
                 throw new EntityPersistFailureException();
             }
+
+        }
+
+        public async Task RemoveMovieFromUserWatchlistAsync(string userId, Guid movieId)
+        {
+            UserMovie? userMovie = await watchlistRepository.GetUserMovieAsync(userId, movieId);
+
+            if (userMovie == null)
+            {
+                throw new EntityNotFoundException();
+            }
+
+            bool successDelete = await watchlistRepository.SoftDeleteUserMovieAsync(userMovie);
+
+            if(!successDelete)
+            {
+                throw new EntityPersistFailureException();
+            }
+
         }
     }
 }

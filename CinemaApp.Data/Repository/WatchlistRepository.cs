@@ -24,7 +24,9 @@ namespace CinemaApp.Data.Repository
         public async Task<bool> ExistsAsync(string userId, Guid movieId)
         {
 
-            bool watchListEntryExist = await DbContext.UsersMovies.AnyAsync(um => um.UserId.ToLower() == userId.ToLower() && um.MovieId ==  movieId);
+            bool watchListEntryExist = await DbContext.UsersMovies
+                
+                .AnyAsync(um => um.UserId.ToLower() == userId.ToLower() && um.MovieId ==  movieId);
 
             return watchListEntryExist;
         }
@@ -36,6 +38,37 @@ namespace CinemaApp.Data.Repository
             return userMovies;
         }
 
-     
+        public async Task<UserMovie> GetUserMovieAsync(string userId, Guid movieId)
+        {
+            UserMovie? userMovie = await DbContext.UsersMovies.SingleOrDefaultAsync(um => um.UserId.ToLower() == userId.ToLower() && um.MovieId == movieId);
+
+            return userMovie;
+        }
+
+        public async Task<UserMovie?> GetUserMovieIncludeDeleteAsync(string userId, Guid movieId)
+        {
+            UserMovie? userMovie = await DbContext.UsersMovies.IgnoreQueryFilters().SingleOrDefaultAsync(um => um.UserId.ToLower() == userId.ToLower() && um.MovieId == movieId);
+
+            return userMovie;
+        }
+
+        public async Task<bool> SoftDeleteUserMovieAsync(UserMovie userMovie)
+        {
+            userMovie.IsDeleted = true;
+            DbContext.UsersMovies.Update(userMovie);
+
+            int result = await SaveChangesAsync();
+
+            return result == 1;
+        }
+
+        public async Task<bool> UpdateUserMovieAsync(UserMovie userMovie)
+        {
+            DbContext.UsersMovies.Update(userMovie);
+
+            int result = await SaveChangesAsync();
+
+            return result == 1;
+        }
     }
 }

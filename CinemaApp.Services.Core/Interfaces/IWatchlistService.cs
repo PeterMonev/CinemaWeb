@@ -14,5 +14,7 @@ namespace CinemaApp.Services.Core.Interfaces
         Task<bool> MovieIsUserWatchlistAsync(string userId, Guid movieID);
 
         Task AddMovieToUserWatchlistAsync(string userId, Guid movieId);
+
+        Task RemoveMovieFromUserWatchlistAsync(string userId, Guid movieId);
     }
 }

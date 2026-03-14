@@ -38,7 +38,7 @@ namespace CinemaApp.Data.Repository
             return userMovies;
         }
 
-        public async Task<UserMovie> GetUserMovieAsync(string userId, Guid movieId)
+        public async Task<UserMovie?> GetUserMovieAsync(string userId, Guid movieId)
         {
             UserMovie? userMovie = await DbContext.UsersMovies.SingleOrDefaultAsync(um => um.UserId.ToLower() == userId.ToLower() && um.MovieId == movieId);
 
